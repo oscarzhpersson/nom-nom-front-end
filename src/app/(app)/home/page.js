@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import firebaseApp from '@/lib/firebase';
 
@@ -9,18 +9,44 @@ import Dropdown from '@/components/dropdown';
 import TableCard from '@/components/defined/table-card';
 import GuestCard from '@/components/defined/guest-card';
 
-export default async function HomePage() {
+export default function HomePage() {
+  const [dataList, setDataList] = useState([]);
+  const [tables, setTables] = useState([]);
+  const [guests, setGuests] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
 
-  const db = getFirestore(firebaseApp);
-  const querySnapshot = await getDocs(collection(db, 'sessions'));
-  const dataList = querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  useEffect(() => {
+    const fetchSessions = async () => {
+      const db = getFirestore(firebaseApp);
+      const querySnapshot = await getDocs(collection(db, 'sessions'));
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(data);
+      setDataList(data);
+    };
 
-  console.log(dataList);
+    fetchSessions();
+
+    // Generate random tables and guests only on the client
+    setTables(
+      Array.from({ length: 12 }, (_, index) => ({
+        tableNumber: 500 + index,
+        time: Math.floor(Math.random() * 23) + 1 + ':00',
+        size: Math.floor(Math.random() * 10) + 1,
+      }))
+    );
+
+    setGuests(
+      Array.from({ length: 12 }, (_, index) => ({
+        guestId: 100 + index,
+        name: 'Guest ' + (100 + index),
+        total: Math.floor(Math.random() * 100000) + 10000,
+      }))
+    );
+  }, []);
 
   const servers = [
     'Oscar Persson',
@@ -38,18 +64,6 @@ export default async function HomePage() {
     'filter6',
   ];
 
-  const tables = Array.from({ length: 12 }, (_, index) => ({
-    tableNumber: 500 + index,
-    time: Math.floor(Math.random() * 23) + 1 + ':00',
-    size: Math.floor(Math.random() * 10) + 1,
-  }));
-
-  const guests = Array.from({ length: 12 }, (_, index) => ({
-    guestId: 100 + index,
-    name: 'Guest ' + (100 + index),
-    total: Math.floor(Math.random() * 100000) + 10000,
-  }));
-
   return (
     <div className="flex flex-col">
       <Navbar servers={servers} />
@@ -63,12 +77,14 @@ export default async function HomePage() {
               tableNumber={table.tableNumber}
               time={table.time}
               size={table.size}
-              onSelect={() => setSelectedTable(table)}
+              onSelect={() =>
+                setSelectedTable(selectedTable === table ? null : table)
+              }
               selected={selectedTable === table}
             />
           ))}
         </div>
-        <div className="flex w-2/6 h-screen overflow-y-scroll bg-[#F7F7F7] p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+        <div className="flex w-2/6 h-screen overflow-y-scroll bg-[#F7F7F7] pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
           <h2 className="text-lg font-semibold text-black">Guests</h2>
           <div className="flex flex-row flex-wrap space-12">
             {guests.map((guest) => (
@@ -78,8 +94,9 @@ export default async function HomePage() {
                 guestId={guest.guestId}
                 name={guest.name}
                 total={guest.total}
-                paid={guest.paid}
-                onSelect={() => setSelectedGuest(guest)}
+                onSelect={() =>
+                  setSelectedGuest(selectedGuest === guest ? null : guest)
+                }
                 selected={selectedGuest === guest}
               />
             ))}
