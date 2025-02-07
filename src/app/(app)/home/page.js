@@ -114,7 +114,7 @@ function Sidebar({ title, items, renderItem, options }) {
 
 function MainContent({ guests, selectedGuest, setSelectedGuest }) {
   return (
-    <div className="flex w-6/12 h-screen overflow-y-scroll bg-[#F7F7F7] flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+    <div className="flex w-6/12 h-screen overflow-y-scroll justify-between bg-[#F7F7F7] flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
       <h2 className="text-lg p-6 font-semibold text-black">Guests</h2>
       <div className="flex flex-row px-6 flex-wrap space-12">
         {guests.map((guest) => (
@@ -138,18 +138,20 @@ function MainContent({ guests, selectedGuest, setSelectedGuest }) {
 
 function TableOverview() {
   return (
-    <div className="flex flex-col h-full flex-wrap space-12 bg-[#F7F7F7]">
+    <div className="flex flex-col border-t border-gray-200 h-full flex-wrap space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
-      <OverviewItem label="Paid" amount={45261.89} />
-      <OverviewItem label="Tip" amount={26.0} />
-      <OverviewItem label="Total" amount={52560.9} />
+      <div className="flex flex-row">
+        <OverviewItem label="Paid" amount={45261.89} />
+        <OverviewItem label="Tip" amount={26.0} />
+        <OverviewItem label="Total" amount={52560.9} />
+      </div>
     </div>
   );
 }
 
 function OverviewItem({ label, amount }) {
   return (
-    <div className="flex flex-col text-black px-6 py-2 border-t border-b border-gray-200">
+    <div className="flex flex-col text-black px-6 py-2">
       <p className="text-xs">{label}</p>
       <p className="text-2xl font-bold">{formatCurrency(amount)}</p>
     </div>
