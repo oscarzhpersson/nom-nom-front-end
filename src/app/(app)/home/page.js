@@ -1,10 +1,11 @@
 import React from 'react';
-
-import Navbar from '@/components/navbar';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import firebaseApp from '@/lib/firebase';
+
+import Navbar from '@/components/navbar';
 import Dropdown from '@/components/dropdown';
 import TableCard from '@/components/defined/table-card';
+import GuestCard from '@/components/defined/guest-card';
 
 export default async function HomePage() {
   const servers = [
@@ -16,8 +17,11 @@ export default async function HomePage() {
 
   const db = getFirestore(firebaseApp);
   const querySnapshot = await getDocs(collection(db, 'sessions'));
-  const dataList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  console.log(dataList)
+  const dataList = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  console.log(dataList);
 
   const options = [
     'filter1',
