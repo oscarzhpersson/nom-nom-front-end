@@ -138,7 +138,7 @@ function MainContent({ guests, selectedGuest, setSelectedGuest }) {
 
 function TableOverview() {
   return (
-    <div className="flex flex-col h-full flex-wrap space-12 bg-white">
+    <div className="flex flex-col h-full flex-wrap space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
       <OverviewItem label="Paid" amount={45261.89} />
       <OverviewItem label="Tip" amount={26.0} />
