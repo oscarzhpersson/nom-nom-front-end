@@ -1,7 +1,15 @@
-import React, { useState } from "react";
+'use client';
 
-export default function Dropdown({ options = [], onChange = () => {}, selected = "" }) {
-  const [currentOption, setCurrentOption] = useState(selected || (options.length > 0 ? options[0] : ""));
+import React, { useState } from 'react';
+
+export default function Dropdown({
+  options = [],
+  onChange = () => {},
+  selected = '',
+}) {
+  const [currentOption, setCurrentOption] = useState(
+    selected || (options.length > 0 ? options[0] : '')
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (option) => {
@@ -16,7 +24,7 @@ export default function Dropdown({ options = [], onChange = () => {}, selected =
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex justify-between items-center font-extralight text-black px-4 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <span>{currentOption || "Select an option"}</span>
+        <span>{currentOption || 'Select an option'}</span>
         <svg
           className="w-4 h-4"
           fill="none"
@@ -24,7 +32,12 @@ export default function Dropdown({ options = [], onChange = () => {}, selected =
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
 
