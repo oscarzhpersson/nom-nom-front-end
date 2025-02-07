@@ -31,17 +31,22 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col">
       <Navbar servers={servers} />
-      <div className="flex w-1/4 h-screen overflow-y-scroll p-6 pt-24 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
-        <h2 className="text-lg font-semibold text-black">Tables</h2>
-        <Dropdown options={options} />
-        {tables.map((table) => (
-          <TableCard
-            key={table.tableNumber}
-            tableNumber={table.tableNumber}
-            time={table.time}
-            size={table.size}
-          />
-        ))}
+      <div className="flex flex-row">
+        <div className="flex w-1/4 h-screen overflow-y-scroll pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+          <h2 className="text-lg font-semibold text-black">Tables</h2>
+          <Dropdown options={options} />
+          {tables.map((table) => (
+            <TableCard
+              key={table.tableNumber}
+              tableNumber={table.tableNumber}
+              time={table.time}
+              size={table.size}
+            />
+          ))}
+        </div>
+        <div className="flex w-2/4 h-screen overflow-y-scroll bg-[#F7F7F7] p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+          <h2 className="text-lg font-semibold text-black">Guests</h2>
+        </div>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ export default function Navbar({ servers }) {
   const [inputValue, setInputValue] = useState('');
 
   return (
-    <nav className="fixed top-0 left-0 w-full flex flex-row px-8 items-center justify-between p-3 shadow-sm bg-white z-50">
+    <nav className="w-full flex flex-row px-8 items-center justify-between p-3 shadow-sm bg-white z-50">
       <div className="flex flex-row items-center space-x-10 font-extralight text-black">
         <Dropdown
           options={servers}
