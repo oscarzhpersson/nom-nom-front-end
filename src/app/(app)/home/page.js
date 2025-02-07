@@ -17,22 +17,19 @@ export default function HomePage() {
   const [tables, setTables] = useState([]);
   const [guests, setGuests] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
 
   useEffect(() => {
-    fetchSessions();
     fetchTables();
-    initializeGuests();
+    fetchSessions();
   }, []);
 
-  const fetchSessions = async () => {
-    const querySnapshot = await getDocs(collection(db, 'sessions'));
-    const sessionsData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setSessions(sessionsData);
-  };
+  useEffect(() => {
+    const selectedSession = getSessionFromTable(selectedTable, sessions)
+    fetchOrders(selectedSession?.id)
+    setGuests(selectedSession?.users ?? {})
+  }, [sessions, selectedTable]);
 
   const fetchTables = async () => {
     const querySnapshot = await getDocs(collection(db, 'tables'));
@@ -43,14 +40,26 @@ export default function HomePage() {
     setTables(tablesData);
   };
 
-  const initializeGuests = () => {
-    setGuests(
-      Array.from({ length: 12 }, (_, index) => ({
-        guestId: 100 + index,
-        name: `Guest ${100 + index}`,
-        total: Math.floor(Math.random() * 100000) + 10000,
-      }))
-    );
+  const fetchSessions = async () => {
+    const querySnapshot = await getDocs(collection(db, 'sessions'));
+    const sessionsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setSessions(sessionsData);
+  };
+
+  const fetchOrders = async (sessionId) => {
+    if (!sessionId) return [];
+  
+    const ordersCollectionRef = collection(db, 'sessions', sessionId, 'orders');
+    const querySnapshot = await getDocs(ordersCollectionRef);
+    const ordersData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setSelectedOrders(ordersData)
   };
 
   const servers = [
@@ -81,7 +90,7 @@ export default function HomePage() {
               key={table.id}
               tableNumber={table.id}
               time={"60 minutes"}
-              size={Object.keys(getSessionFromTable(table, sessions)?.users ?? {}).length}
+              size={guestsToList(getSessionFromTable(table, sessions)?.users ?? {}).length}
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
@@ -94,6 +103,7 @@ export default function HomePage() {
           guests={guests}
           selectedGuest={selectedGuest}
           setSelectedGuest={setSelectedGuest}
+          selectedOrders={selectedOrders}
         />
         <GuestDetails selectedGuest={selectedGuest} />
       </div>
@@ -111,18 +121,18 @@ function Sidebar({ title, items, renderItem, options }) {
   );
 }
 
-function MainContent({ guests, selectedGuest, setSelectedGuest }) {
+function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }) {
   return (
     <div className="flex w-6/12 h-screen overflow-y-scroll justify-between bg-[#F7F7F7] flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
       <h2 className="text-lg p-6 font-semibold text-black">Guests</h2>
       <div className="flex flex-row px-6 flex-wrap space-12">
-        {guests.map((guest) => (
+        {guestsToList(guests)?.map((guest) => (
           <GuestCard
             className="w-72 m-2"
-            key={guest.guestId}
-            guestId={guest.guestId}
+            key={guest.id}
+            guestId={guest.id}
             name={guest.name}
-            total={guest.total}
+            total={getTotalFromGuest(guest, selectedOrders)}
             onSelect={() =>
               setSelectedGuest(selectedGuest === guest ? null : guest)
             }
@@ -173,4 +183,20 @@ function getSessionFromTable(table, sessions) {
     (session) => table?.id === session?.table_id && session?.closed === false
   );
   return session ?? null;
+}
+
+function getTotalFromGuest(guest, orders) {
+  const guestOrders = orders?.filter(order => order.user_id === guest.id);
+
+  const total = guestOrders?.reduce((sum, order) => {
+    return sum + (order.price * order.quantity);
+  }, 0);
+
+  return total;
+}
+
+function guestsToList(guests) {
+return Object.entries(guests).map(([key, value]) => {
+  return { id: key, ...value };
+})
 }

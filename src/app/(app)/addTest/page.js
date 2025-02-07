@@ -5,9 +5,9 @@ import firebaseApp from '@/lib/firebase';
 export default function TestPage() {
     const newOrder = {
         user_id: '4',
-        item_name: 'Coffee',
-        price: 3.5,
-        quantity: 2,
+        item_name: 'Pizza',
+        price: 5,
+        quantity: 4,
         status: 'pending'
     };
 
