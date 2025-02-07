@@ -11,8 +11,10 @@ import GuestCard from '@/components/defined/guest-card';
 
 export default function HomePage() {
   const [dataList, setDataList] = useState([]);
+
   const [tables, setTables] = useState([]);
   const [guests, setGuests] = useState([]);
+
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
 
@@ -30,7 +32,6 @@ export default function HomePage() {
 
     fetchSessions();
 
-    // Generate random tables and guests only on the client
     setTables(
       Array.from({ length: 12 }, (_, index) => ({
         tableNumber: 500 + index,
@@ -68,7 +69,7 @@ export default function HomePage() {
     <div className="flex flex-col">
       <Navbar servers={servers} />
       <div className="flex flex-row">
-        <div className="flex w-1/5 h-screen overflow-y-scroll pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+        <div className="flex w-2/12 h-screen overflow-y-scroll pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
           <h2 className="text-lg font-semibold text-black">Tables</h2>
           <Dropdown options={options} />
           {tables.map((table) => (
@@ -84,7 +85,7 @@ export default function HomePage() {
             />
           ))}
         </div>
-        <div className="flex w-3/6 h-screen overflow-y-scroll bg-[#F7F7F7] pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+        <div className="flex w-6/12 h-screen overflow-y-scroll bg-[#F7F7F7] pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
           <h2 className="text-lg font-semibold text-black">Guests</h2>
           <div className="flex flex-row flex-wrap space-12">
             {guests.map((guest) => (
@@ -101,6 +102,12 @@ export default function HomePage() {
               />
             ))}
           </div>
+        </div>
+        <div className="flex w-4/12 h-screen overflow-y-scroll pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+          <h2 className="text-lg font-semibold text-black">
+            {selectedGuest?.name}
+          </h2>
+          <div className="flex flex-row flex-wrap space-12"></div>
         </div>
       </div>
     </div>
