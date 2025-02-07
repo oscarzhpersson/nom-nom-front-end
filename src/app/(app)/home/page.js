@@ -10,8 +10,10 @@ import TableCard from '@/components/defined/table-card';
 import GuestCard from '@/components/defined/guest-card';
 import formatCurrency from '@/utils/formatCurrency';
 
+const db = getFirestore(firebaseApp);
+
 export default function HomePage() {
-  const [dataList, setDataList] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [tables, setTables] = useState([]);
   const [guests, setGuests] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
@@ -19,29 +21,26 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchSessions();
-    initializeTables();
+    fetchTables();
     initializeGuests();
   }, []);
 
   const fetchSessions = async () => {
-    const db = getFirestore(firebaseApp);
     const querySnapshot = await getDocs(collection(db, 'sessions'));
-    const data = querySnapshot.docs.map((doc) => ({
+    const sessionsData = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    console.log(data);
-    setDataList(data);
+    setSessions(sessionsData);
   };
 
-  const initializeTables = () => {
-    setTables(
-      Array.from({ length: 12 }, (_, index) => ({
-        tableNumber: 500 + index,
-        time: `${Math.floor(Math.random() * 23) + 1}:00`,
-        size: Math.floor(Math.random() * 10) + 1,
-      }))
-    );
+  const fetchTables = async () => {
+    const querySnapshot = await getDocs(collection(db, 'tables'));
+    const tablesData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setTables(tablesData);
   };
 
   const initializeGuests = () => {
@@ -79,10 +78,10 @@ export default function HomePage() {
           items={tables}
           renderItem={(table) => (
             <TableCard
-              key={table.tableNumber}
-              tableNumber={table.tableNumber}
-              time={table.time}
-              size={table.size}
+              key={table.id}
+              tableNumber={table.id}
+              time={"60 minutes"}
+              size={Object.keys(getSessionFromTable(table, sessions)?.users ?? {}).length}
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
@@ -165,4 +164,11 @@ function GuestDetails({ selectedGuest }) {
       <div className="flex flex-row flex-wrap space-12"></div>
     </div>
   );
+}
+
+function getSessionFromTable(table, sessions) {
+  const session = sessions?.find(
+    (session) => table?.id === session?.table_id && session?.closed === false
+  );
+  return session ?? null;
 }
