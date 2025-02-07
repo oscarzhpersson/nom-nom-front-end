@@ -19,7 +19,7 @@ export default function Dropdown({
   };
 
   return (
-    <div className="relative inline-block w-64">
+    <div className="relative inline-block w-64 z-20">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex justify-between items-center font-extralight text-black px-4 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -42,7 +42,7 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
+        <ul className="absolute z-30 w-full mt-1 bg-white border rounded-md shadow-lg">
           {options.map((option) => (
             <li key={option}>
               <a

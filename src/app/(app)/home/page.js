@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import firebaseApp from '@/lib/firebase';
 
@@ -8,12 +10,8 @@ import TableCard from '@/components/defined/table-card';
 import GuestCard from '@/components/defined/guest-card';
 
 export default async function HomePage() {
-  const servers = [
-    'Oscar Persson',
-    'Anthony Bassey',
-    'E Joon Ko',
-    'Robin Ellingsen',
-  ];
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedGuest, setSelectedGuest] = useState(null);
 
   const db = getFirestore(firebaseApp);
   const querySnapshot = await getDocs(collection(db, 'sessions'));
@@ -21,7 +19,15 @@ export default async function HomePage() {
     id: doc.id,
     ...doc.data(),
   }));
+
   console.log(dataList);
+
+  const servers = [
+    'Oscar Persson',
+    'Anthony Bassey',
+    'E Joon Ko',
+    'Robin Ellingsen',
+  ];
 
   const options = [
     'filter1',
@@ -57,10 +63,12 @@ export default async function HomePage() {
               tableNumber={table.tableNumber}
               time={table.time}
               size={table.size}
+              onSelect={() => setSelectedTable(table)}
+              selected={selectedTable === table}
             />
           ))}
         </div>
-        <div className="flex w-1/3 h-screen overflow-y-scroll bg-[#F7F7F7] p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+        <div className="flex w-2/6 h-screen overflow-y-scroll bg-[#F7F7F7] p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
           <h2 className="text-lg font-semibold text-black">Guests</h2>
           <div className="flex flex-row flex-wrap space-12">
             {guests.map((guest) => (
@@ -71,6 +79,8 @@ export default async function HomePage() {
                 name={guest.name}
                 total={guest.total}
                 paid={guest.paid}
+                onSelect={() => setSelectedGuest(guest)}
+                selected={selectedGuest === guest}
               />
             ))}
           </div>

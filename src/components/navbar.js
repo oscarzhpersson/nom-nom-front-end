@@ -19,8 +19,8 @@ export default function Navbar({ servers }) {
           onChange={setSelectedServer}
         />
 
-        <a href="#">Tables</a>
-        <a href="#">Receipts</a>
+        <a href="/home">Tables</a>
+        <a href="/receipts">Receipts</a>
       </div>
       <div className="flex items-center space-x-10">
         <input
