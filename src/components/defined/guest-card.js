@@ -5,9 +5,17 @@ import Card from '@/components/card';
 
 import formatCurrency from '@/utils/formatCurrency';
 
-export default function GuestCard({ name, guestId, total, paid, className }) {
+export default function GuestCard({
+  name,
+  guestId,
+  total,
+  paid,
+  className,
+  onSelect,
+  selected,
+}) {
   return (
-    <Card className={className}>
+    <Card className={className} onSelect={onSelect} selected={selected}>
       <p className="font-light text-sm mb-1 text-[#64748B]">
         {'Guest ID: ' + guestId}
       </p>

@@ -2,9 +2,15 @@
 import React from 'react';
 import Card from '@/components/card';
 
-export default function TableCard({ tableNumber, time, size }) {
+export default function TableCard({
+  tableNumber,
+  time,
+  size,
+  onSelect,
+  selected,
+}) {
   return (
-    <Card>
+    <Card onSelect={onSelect} selected={selected}>
       <h3 className="font-normal text-black">{'Table ' + tableNumber}</h3>
       <div className="flex flex-row items-center text-[#64748B] mt-2 space-x-2">
         <svg

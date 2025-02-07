@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function Card({ children, className }) {
-  const [isSelected, setIsSelected] = useState(false);
-
+export default function Card({ children, onSelect, selected, className }) {
   return (
     <div
-      onClick={() => setIsSelected(!isSelected)}
+      onClick={onSelect}
       className={`cursor-pointer p-4 border rounded-md shadow-sm ${className} ${
-        isSelected ? 'bg-stone-300' : 'bg-white'
+        selected ? 'bg-stone-300' : 'bg-white'
       }`}
     >
       {children}
