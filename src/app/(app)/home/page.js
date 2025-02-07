@@ -84,7 +84,7 @@ export default function HomePage() {
             />
           ))}
         </div>
-        <div className="flex w-2/6 h-screen overflow-y-scroll bg-[#F7F7F7] pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
+        <div className="flex w-3/6 h-screen overflow-y-scroll bg-[#F7F7F7] pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
           <h2 className="text-lg font-semibold text-black">Guests</h2>
           <div className="flex flex-row flex-wrap space-12">
             {guests.map((guest) => (
