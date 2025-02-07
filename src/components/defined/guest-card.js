@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 
 import Card from '@/components/card';
@@ -7,7 +8,7 @@ import formatCurrency from '@/utils/formatCurrency';
 export default function GuestCard({ name, guestId, total, paid }) {
   return (
     <Card>
-      <p className="font-light text-sm text-[#64748B]">
+      <p className="font-light text-sm mb-1 text-[#64748B]">
         {'Guest ID: ' + guestId}
       </p>
       <h2 className="font-thin text-2xl text-black">{name}</h2>
@@ -17,7 +18,7 @@ export default function GuestCard({ name, guestId, total, paid }) {
           width="22"
           height="22"
           fill="currentColor"
-          class="bi bi-cash"
+          classname="bi bi-cash"
           viewBox="0 0 16 16"
         >
           <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />

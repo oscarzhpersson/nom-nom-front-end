@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import Card from '@/components/card';
 
@@ -11,7 +12,7 @@ export default function TableCard({ tableNumber, time, size }) {
           width="16"
           height="16"
           fill="currentColor"
-          class="bi bi-calendar-week"
+          className="bi bi-calendar-week"
           viewBox="0 0 16 16"
         >
           <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
