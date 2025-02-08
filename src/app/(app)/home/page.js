@@ -21,6 +21,7 @@ export default function HomePage() {
   const [guests, setGuests] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
+  console.log(selectedTable)
   const [selectedSession, setSelectedSession] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
@@ -122,7 +123,7 @@ export default function HomePage() {
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
-              selected={selectedTable === table}
+              selected={selectedTable.id === table.id}
             />
           )}
           options={options}
