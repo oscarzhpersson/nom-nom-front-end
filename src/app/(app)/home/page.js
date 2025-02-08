@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { addOrder } from '@/api/add-order';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { motion } from 'framer-motion';
 
 import firebaseApp from '@/lib/firebase';
 
@@ -234,12 +235,12 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
         )
       : [];
 
-  const handleIncrement = (item) => {
-    addOrder(sessions.id, selectedGuest.id, item, 1);
+  const handleIncrement = (item, quantity) => {
+    addOrder(sessions.id, selectedGuest.id, item, quantity + 1);
   };
 
-  const handleDecrement = (item) => {
-    addOrder(sessions.id, selectedGuest.id, item, -1);
+  const handleDecrement = (item, quantity) => {
+    addOrder(sessions.id, selectedGuest.id, item, quantity - 1);
   };
 
   return (
@@ -247,7 +248,7 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
       <h2 className="text-lg font-semibold text-black">
         {selectedGuest?.name || 'Guest Details'}
       </h2>
-      <div className="flex flex-row flex-wrap space-12 space-y-6 overflow-y-scroll hide-scrollbar">
+      <motion.div layout className="flex flex-col gap-4">
         {items
           .map((item) => {
             const matchingOrder = guestOrders.find(
@@ -262,18 +263,25 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
           })
           .sort((a, b) => b.orderQuantity - a.orderQuantity)
           .map((item) => (
-            <ItemCard
+            <motion.div
               key={item.id}
-              name={item.name}
-              price={item.price}
-              description={item.description}
-              quantity={item.orderQuantity}
-              selectedGuest={selectedGuest}
-              onIncrement={() => handleIncrement(item)}
-              onDecrement={() => handleDecrement(item)}
-            />
+              layout
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ItemCard
+                name={item.name}
+                price={item.price}
+                description={item.description}
+                quantity={item.orderQuantity}
+                selectedGuest={selectedGuest}
+                onIncrement={() => handleIncrement(item, item.orderQuantity)}
+                onDecrement={() => handleDecrement(item, item.orderQuantity)}
+              />
+            </motion.div>
           ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

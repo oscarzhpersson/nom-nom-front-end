@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "firebase": "^11.3.0",
+    "framer-motion": "^12.4.1",
     "next": "15.1.6",
     "prettier": "^3.4.2",
     "react": "^19.0.0",
