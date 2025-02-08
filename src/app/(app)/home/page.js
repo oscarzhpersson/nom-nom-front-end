@@ -189,7 +189,7 @@ function MainContent({
           <TableOverview
             selectedOrders={selectedOrders}
             totalPaid={getTotalPaidFromGuests(guests.filter((order) => order?.status === "paid"))}
-            totalTable={getTotalPaidFromGuests(guests)}
+            totalTable={getTotalFromOrders(selectedOrders)}
           />
         )}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
