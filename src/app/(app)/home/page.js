@@ -139,6 +139,7 @@ export default function HomePage() {
           selectedGuest={selectedGuest}
           items={items}
           selectedOrders={selectedOrders}
+          refreshOrders={fetchOrders}
         />
       </div>
     </div>
@@ -227,7 +228,13 @@ function OverviewItem({ label, amount }) {
   );
 }
 
-function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
+function GuestDetails({
+  sessions,
+  selectedGuest,
+  items,
+  selectedOrders,
+  refreshOrders,
+}) {
   const guestOrders =
     selectedGuest && selectedOrders
       ? selectedOrders.filter(
@@ -235,12 +242,26 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
         )
       : [];
 
-  const handleIncrement = (item, quantity) => {
-    addOrder(sessions.id, selectedGuest.id, item, 1);
+  const handleIncrement = async (item) => {
+    try {
+      await addOrder(sessions.id, selectedGuest.id, item, 1);
+      if (refreshOrders) {
+        refreshOrders(sessions.id);
+      }
+    } catch (error) {
+      console.error('Error incrementing order:', error);
+    }
   };
 
-  const handleDecrement = (item, quantity) => {
-    addOrder(sessions.id, selectedGuest.id, item, -1);
+  const handleDecrement = async (item) => {
+    try {
+      await addOrder(sessions.id, selectedGuest.id, item, -1);
+      if (refreshOrders) {
+        refreshOrders(sessions.id);
+      }
+    } catch (error) {
+      console.error('Error decrementing order:', error);
+    }
   };
 
   return (
