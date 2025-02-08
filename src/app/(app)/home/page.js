@@ -21,7 +21,6 @@ export default function HomePage() {
   const [guests, setGuests] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
-  console.log(selectedTable)
   const [selectedSession, setSelectedSession] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
