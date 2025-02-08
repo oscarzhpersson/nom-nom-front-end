@@ -9,7 +9,7 @@ import Dropdown from '@/components/dropdown';
 import TableCard from '@/components/defined/table-card';
 import GuestCard from '@/components/defined/guest-card';
 import formatCurrency from '@/utils/formatCurrency';
-
+import ItemCard from '@/components/defined/item-card';
 const db = getFirestore(firebaseApp);
 
 export default function HomePage() {
@@ -62,10 +62,10 @@ export default function HomePage() {
 
   const fetchOrders = async (sessionId) => {
     if (!sessionId) {
-      setSelectedOrders(null)
-      return []
-    };
-  
+      setSelectedOrders(null);
+      return [];
+    }
+
     const ordersCollectionRef = collection(db, 'sessions', sessionId, 'orders');
     const querySnapshot = await getDocs(ordersCollectionRef);
     const ordersData = querySnapshot.docs.map((doc) => ({
@@ -73,7 +73,7 @@ export default function HomePage() {
       ...doc.data(),
     }));
 
-    setSelectedOrders(ordersData)
+    setSelectedOrders(ordersData);
   };
 
   useEffect(() => {
@@ -81,9 +81,9 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const selectedSession = getSessionFromTable(selectedTable, sessions)
-    fetchOrders(selectedSession?.id)
-    setGuests(selectedSession?.users ?? {})
+    const selectedSession = getSessionFromTable(selectedTable, sessions);
+    fetchOrders(selectedSession?.id);
+    setGuests(selectedSession?.users ?? {});
   }, [sessions, selectedTable]);
 
   return (
@@ -98,7 +98,10 @@ export default function HomePage() {
               key={table.id}
               tableNumber={table.id}
               time="60 minutes"
-              size={guestsToList(getSessionFromTable(table, sessions)?.users ?? {}).length}
+              size={
+                guestsToList(getSessionFromTable(table, sessions)?.users ?? {})
+                  .length
+              }
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
@@ -129,7 +132,12 @@ function Sidebar({ title, items, renderItem, options }) {
   );
 }
 
-function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }) {
+function MainContent({
+  guests,
+  selectedGuest,
+  setSelectedGuest,
+  selectedOrders,
+}) {
   return (
     <div className="flex w-6/12 overflow-y-scroll bg-[#F7F7F7] flex-col space-y-6 border-r border-gray-200 hide-scrollbar justify-between">
       <div className="flex flex-col">
@@ -151,7 +159,7 @@ function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }
         </div>
       </div>
       <div className="flex flex-col pb-20">
-        {selectedOrders &&         <TableOverview selectedOrders={selectedOrders} />}
+        {selectedOrders && <TableOverview selectedOrders={selectedOrders} />}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
           Finish Session
         </button>
@@ -160,8 +168,8 @@ function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }
   );
 }
 
-function TableOverview({selectedOrders}) {
-  const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders) : 0
+function TableOverview({ selectedOrders }) {
+  const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders) : 0;
   return (
     <div className="flex flex-col border-t border-gray-200 space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
@@ -187,7 +195,14 @@ function GuestDetails({ selectedGuest }) {
       <h2 className="text-lg font-semibold text-black">
         {selectedGuest?.name || 'Guest Details'}
       </h2>
-      <div className="flex flex-row flex-wrap space-12"></div>
+      <div className="flex flex-row flex-wrap space-12">
+        <ItemCard
+          name="Item 1"
+          price={100}
+          description="Description 1"
+          quantity={1}
+        />
+      </div>
     </div>
   );
 }
@@ -201,18 +216,18 @@ function getSessionFromTable(table, sessions) {
 
 function getTotalFromOrders(orders) {
   return orders?.reduce((sum, order) => {
-    return sum + (order.price * order.quantity);
+    return sum + order.price * order.quantity;
   }, 0);
 }
 
 function getTotalFromGuest(guest, orders) {
-  const guestOrders = orders?.filter(order => order.user_id === guest.id);
+  const guestOrders = orders?.filter((order) => order.user_id === guest.id);
 
   return getTotalFromOrders(guestOrders);
 }
 
 function guestsToList(guests) {
-return Object.entries(guests).map(([key, value]) => {
-  return { id: key, ...value };
-})
+  return Object.entries(guests).map(([key, value]) => {
+    return { id: key, ...value };
+  });
 }

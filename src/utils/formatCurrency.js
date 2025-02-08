@@ -1,4 +1,4 @@
-function formatCurrency(amount, locale = 'en-US', currency = 'USD') {
+function formatCurrency(amount, locale = 'sv-SE', currency = 'SEK') {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
