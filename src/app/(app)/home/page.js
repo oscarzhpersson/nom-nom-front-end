@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { addOrder } from '@/api/add-order';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+
 import firebaseApp from '@/lib/firebase';
 
 import Navbar from '@/components/navbar';
@@ -10,6 +12,7 @@ import TableCard from '@/components/defined/table-card';
 import GuestCard from '@/components/defined/guest-card';
 import formatCurrency from '@/utils/formatCurrency';
 import ItemCard from '@/components/defined/item-card';
+
 const db = getFirestore(firebaseApp);
 
 export default function HomePage() {
@@ -39,12 +42,12 @@ export default function HomePage() {
 
   const fetchData = async () => {
     try {
-      // Fetch sessions and tables concurrently.
-      const [sessionsSnapshot, tablesSnapshot, itemsSnapshot] = await Promise.all([
-        getDocs(collection(db, 'sessions')),
-        getDocs(collection(db, 'tables')),
-        getDocs(collection(db, 'items')),
-      ]);
+      const [sessionsSnapshot, tablesSnapshot, itemsSnapshot] =
+        await Promise.all([
+          getDocs(collection(db, 'sessions')),
+          getDocs(collection(db, 'tables')),
+          getDocs(collection(db, 'items')),
+        ]);
 
       const sessionsData = sessionsSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -123,7 +126,12 @@ export default function HomePage() {
           setSelectedGuest={setSelectedGuest}
           selectedOrders={selectedOrders}
         />
-        <GuestDetails selectedGuest={selectedGuest} />
+        <GuestDetails
+          sessions={sessions}
+          selectedGuest={selectedGuest}
+          items={items}
+          selectedOrders={selectedOrders}
+        />
       </div>
     </div>
   );
@@ -159,7 +167,9 @@ function MainContent({
                 setSelectedGuest(selectedGuest?.id === guest?.id ? null : guest)
               }
               selected={selectedGuest?.id === guest?.id}
-              orders={selectedOrders?.filter(order => order.user_id === guest.id)}
+              orders={selectedOrders?.filter(
+                (order) => order.user_id === guest.id
+              )}
               guest={guest}
             />
           ))}
@@ -196,19 +206,52 @@ function OverviewItem({ label, amount }) {
   );
 }
 
-function GuestDetails({ selectedGuest }) {
+function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
+  const guestOrders =
+    selectedGuest && selectedOrders
+      ? selectedOrders.filter(
+          (order) => String(order.user_id) === String(selectedGuest.id)
+        )
+      : [];
+
+  const handleIncrement = (item, quantity) => {
+    console.log('Increment clicked for:', item);
+    console.log(sessions);
+    addOrder(sessions.id, selectedGuest.id, item, quantity + 1);
+  };
+
+  const handleDecrement = (item, quantity) => {
+    console.log('Decrement clicked for:', item);
+    addOrder(sessions.id, selectedGuest.id, item, quantity - 1);
+  };
+
   return (
     <div className="flex w-4/12 h-screen overflow-y-scroll pb-24 p-6 flex-col space-y-6 border-r border-gray-200 hide-scrollbar">
       <h2 className="text-lg font-semibold text-black">
         {selectedGuest?.name || 'Guest Details'}
       </h2>
-      <div className="flex flex-row flex-wrap space-12">
-        <ItemCard
-          name="Item 1"
-          price={100}
-          description="Description 1"
-          quantity={1}
-        />
+      <div className="flex flex-row flex-wrap space-12 space-y-6 overflow-y-scroll hide-scrollbar">
+        {items.map((item) => {
+          const matchingOrder = guestOrders.find(
+            (order) =>
+              String(order.item_name).toLowerCase() ===
+              String(item.name).toLowerCase()
+          );
+          const orderQuantity = matchingOrder?.quantity ?? 0;
+
+          return (
+            <ItemCard
+              key={item.id}
+              name={item.name}
+              price={item.price}
+              description={item.description}
+              quantity={orderQuantity}
+              selectedGuest={selectedGuest}
+              onIncrement={() => handleIncrement(item, orderQuantity)}
+              onDecrement={() => handleDecrement(item, orderQuantity)}
+            />
+          );
+        })}
       </div>
     </div>
   );
