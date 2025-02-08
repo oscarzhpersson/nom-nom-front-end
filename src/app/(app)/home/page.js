@@ -95,7 +95,7 @@ export default function HomePage() {
 
     fetchDataWithPolling();
 
-    const intervalId = setInterval(fetchDataWithPolling, 5000);
+    const intervalId = setInterval(fetchDataWithPolling, 2000);
 
     return () => clearInterval(intervalId);
   }, []);
