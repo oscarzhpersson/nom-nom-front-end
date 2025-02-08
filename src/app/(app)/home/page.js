@@ -19,7 +19,6 @@ export default function HomePage() {
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
-  console.log(selectedGuest)
 
   const servers = [
     'Oscar Persson',
@@ -62,7 +61,10 @@ export default function HomePage() {
   };
 
   const fetchOrders = async (sessionId) => {
-    if (!sessionId) return [];
+    if (!sessionId) {
+      setSelectedOrders(null)
+      return []
+    };
   
     const ordersCollectionRef = collection(db, 'sessions', sessionId, 'orders');
     const querySnapshot = await getDocs(ordersCollectionRef);
@@ -149,7 +151,7 @@ function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }
         </div>
       </div>
       <div className="flex flex-col pb-20">
-        <TableOverview />
+        {selectedOrders &&         <TableOverview selectedOrders={selectedOrders} />}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
           Finish Session
         </button>
@@ -158,14 +160,13 @@ function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }
   );
 }
 
-function TableOverview() {
+function TableOverview({selectedOrders}) {
+  const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders) : 0
   return (
     <div className="flex flex-col border-t border-gray-200 space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
       <div className="flex flex-row">
-        <OverviewItem label="Paid" amount={45261.89} />
-        <OverviewItem label="Tip" amount={26.0} />
-        <OverviewItem label="Total" amount={52560.9} />
+        <OverviewItem label="Total" amount={totalOrder} />
       </div>
     </div>
   );
@@ -198,14 +199,16 @@ function getSessionFromTable(table, sessions) {
   return session ?? null;
 }
 
+function getTotalFromOrders(orders) {
+  return orders?.reduce((sum, order) => {
+    return sum + (order.price * order.quantity);
+  }, 0);
+}
+
 function getTotalFromGuest(guest, orders) {
   const guestOrders = orders?.filter(order => order.user_id === guest.id);
 
-  const total = guestOrders?.reduce((sum, order) => {
-    return sum + (order.price * order.quantity);
-  }, 0);
-
-  return total;
+  return getTotalFromOrders(guestOrders);
 }
 
 function guestsToList(guests) {
