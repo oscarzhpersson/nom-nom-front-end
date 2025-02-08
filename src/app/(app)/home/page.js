@@ -122,7 +122,7 @@ export default function HomePage() {
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
-              selected={selectedTable.id === table.id}
+              selected={selectedTable?.id === table?.id}
             />
           )}
           options={options}
