@@ -17,47 +17,8 @@ export default function HomePage() {
   const [tables, setTables] = useState([]);
   const [guests, setGuests] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch sessions and tables concurrently.
-        const [sessionsSnapshot, tablesSnapshot] = await Promise.all([
-          getDocs(collection(db, 'sessions')),
-          getDocs(collection(db, 'tables')),
-        ]);
-
-        const sessionsData = sessionsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        const tablesData = tablesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setSessions(sessionsData);
-        setTables(tablesData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-    initializeGuests();
-  }, []);
-
-  // Memoized to avoid unnecessary re-creations.
-  const initializeGuests = useCallback(() => {
-    setGuests(
-      Array.from({ length: 5 }, (_, index) => ({
-        guestId: 100 + index,
-        name: `Guest ${100 + index}`,
-        total: Math.floor(Math.random() * 100000) + 10000,
-      }))
-    );
-  }, []);
 
   const servers = [
     'Oscar Persson',
@@ -75,11 +36,52 @@ export default function HomePage() {
     'filter6',
   ];
 
-  // Helper function to compute the number of users at a table's active session.
-  const getTableUserCount = (table) => {
-    const session = getSessionFromTable(table, sessions);
-    return Object.keys(session?.users || {}).length;
+  const fetchData = async () => {
+    try {
+      // Fetch sessions and tables concurrently.
+      const [sessionsSnapshot, tablesSnapshot] = await Promise.all([
+        getDocs(collection(db, 'sessions')),
+        getDocs(collection(db, 'tables')),
+      ]);
+
+      const sessionsData = sessionsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      const tablesData = tablesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setSessions(sessionsData);
+      setTables(tablesData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+
+  const fetchOrders = async (sessionId) => {
+    if (!sessionId) return [];
+  
+    const ordersCollectionRef = collection(db, 'sessions', sessionId, 'orders');
+    const querySnapshot = await getDocs(ordersCollectionRef);
+    const ordersData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setSelectedOrders(ordersData)
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const selectedSession = getSessionFromTable(selectedTable, sessions)
+    fetchOrders(selectedSession?.id)
+    setGuests(selectedSession?.users ?? {})
+  }, [sessions, selectedTable]);
 
   return (
     <div className="flex flex-col">
@@ -93,7 +95,7 @@ export default function HomePage() {
               key={table.id}
               tableNumber={table.id}
               time="60 minutes"
-              size={getTableUserCount(table)}
+              size={guestsToList(getSessionFromTable(table, sessions)?.users ?? {}).length}
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
@@ -106,6 +108,7 @@ export default function HomePage() {
           guests={guests}
           selectedGuest={selectedGuest}
           setSelectedGuest={setSelectedGuest}
+          selectedOrders={selectedOrders}
         />
         <GuestDetails selectedGuest={selectedGuest} />
       </div>
@@ -123,19 +126,19 @@ function Sidebar({ title, items, renderItem, options }) {
   );
 }
 
-function MainContent({ guests, selectedGuest, setSelectedGuest }) {
+function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }) {
   return (
     <div className="flex w-6/12 overflow-y-scroll bg-[#F7F7F7] flex-col space-y-6 border-r border-gray-200 hide-scrollbar justify-between">
       <div className="flex flex-col">
         <h2 className="text-lg p-6 font-semibold text-black">Guests</h2>
         <div className="flex flex-row px-6 flex-wrap space-12">
-          {guests.map((guest) => (
+          {guestsToList(guests)?.map((guest) => (
             <GuestCard
               className="w-72 m-2"
-              key={guest.guestId}
-              guestId={guest.guestId}
+              key={guest.id}
+              guestId={guest.id}
               name={guest.name}
-              total={guest.total}
+              total={getTotalFromGuest(guest, selectedOrders)}
               onSelect={() =>
                 setSelectedGuest(selectedGuest === guest ? null : guest)
               }
@@ -192,4 +195,20 @@ function getSessionFromTable(table, sessions) {
     (session) => table?.id === session?.table_id && session?.closed === false
   );
   return session ?? null;
+}
+
+function getTotalFromGuest(guest, orders) {
+  const guestOrders = orders?.filter(order => order.user_id === guest.id);
+
+  const total = guestOrders?.reduce((sum, order) => {
+    return sum + (order.price * order.quantity);
+  }, 0);
+
+  return total;
+}
+
+function guestsToList(guests) {
+return Object.entries(guests).map(([key, value]) => {
+  return { id: key, ...value };
+})
 }
