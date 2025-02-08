@@ -16,6 +16,7 @@ export default function HomePage() {
   const [sessions, setSessions] = useState([]);
   const [tables, setTables] = useState([]);
   const [guests, setGuests] = useState([]);
+  const [items, setItems] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
@@ -39,9 +40,10 @@ export default function HomePage() {
   const fetchData = async () => {
     try {
       // Fetch sessions and tables concurrently.
-      const [sessionsSnapshot, tablesSnapshot] = await Promise.all([
+      const [sessionsSnapshot, tablesSnapshot, itemsSnapshot] = await Promise.all([
         getDocs(collection(db, 'sessions')),
         getDocs(collection(db, 'tables')),
+        getDocs(collection(db, 'items')),
       ]);
 
       const sessionsData = sessionsSnapshot.docs.map((doc) => ({
@@ -52,9 +54,14 @@ export default function HomePage() {
         id: doc.id,
         ...doc.data(),
       }));
+      const itemsData = itemsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       setSessions(sessionsData);
       setTables(tablesData);
+      setItems(itemsData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
