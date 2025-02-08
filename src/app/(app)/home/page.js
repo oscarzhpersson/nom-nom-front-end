@@ -139,13 +139,13 @@ function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }
             <GuestCard
               className="w-72 m-2"
               key={guest.id}
-              guestId={guest.id}
-              name={guest.name}
               total={getTotalFromGuest(guest, selectedOrders) ?? 0}
               onSelect={() =>
                 setSelectedGuest(selectedGuest?.id === guest?.id ? null : guest)
               }
               selected={selectedGuest?.id === guest?.id}
+              orders={selectedOrders?.filter(order => order.user_id === guest.id)}
+              guest={guest}
             />
           ))}
         </div>

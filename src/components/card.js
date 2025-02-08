@@ -4,7 +4,7 @@ export default function Card({ children, onSelect, selected, className }) {
   return (
     <div
       onClick={onSelect}
-      className={`cursor-pointer p-4 border rounded-md shadow-sm ${className} ${
+      className={`cursor-pointer p-4 border rounded-md shadow-sm relative ${className} ${
         selected ? 'bg-stone-300' : 'bg-white'
       }`}
     >
