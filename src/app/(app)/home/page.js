@@ -234,12 +234,12 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
         )
       : [];
 
-  const handleIncrement = (item, quantity) => {
-    addOrder(sessions.id, selectedGuest.id, item, quantity + 1);
+  const handleIncrement = (item) => {
+    addOrder(sessions.id, selectedGuest.id, item, 1);
   };
 
-  const handleDecrement = (item, quantity) => {
-    addOrder(sessions.id, selectedGuest.id, item, quantity - 1);
+  const handleDecrement = (item) => {
+    addOrder(sessions.id, selectedGuest.id, item, -1);
   };
 
   return (
@@ -269,8 +269,8 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
               description={item.description}
               quantity={item.orderQuantity}
               selectedGuest={selectedGuest}
-              onIncrement={() => handleIncrement(item, item.orderQuantity)}
-              onDecrement={() => handleDecrement(item, item.orderQuantity)}
+              onIncrement={() => handleIncrement(item)}
+              onDecrement={() => handleDecrement(item)}
             />
           ))}
       </div>
