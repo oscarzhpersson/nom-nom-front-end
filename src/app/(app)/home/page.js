@@ -204,6 +204,7 @@ function TableOverview({ selectedOrders, totalPaid }) {
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
       <div className="flex flex-row">
         <OverviewItem label="Paid" amount={totalOrder} />
+<<<<<<< Updated upstream
         <OverviewItem
           label="Tip"
           amount={totalPaid ? totalPaid - totalOrder : 0}
@@ -212,6 +213,10 @@ function TableOverview({ selectedOrders, totalPaid }) {
           label="Total"
           amount={totalPaid ? totalPaid : totalOrder}
         />
+=======
+        <OverviewItem label="Tip" amount={Math.max(totalPaid ? totalPaid - totalOrder : 0, 0)} />
+        <OverviewItem label="Total" amount={totalPaid ? totalPaid : totalOrder} />
+>>>>>>> Stashed changes
       </div>
     </div>
   );
