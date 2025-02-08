@@ -91,11 +91,11 @@ export default function HomePage() {
     const fetchDataWithPolling = async () => {
       await fetchData();
     };
-  
+
     fetchDataWithPolling();
-  
+
     const intervalId = setInterval(fetchDataWithPolling, 5000);
-  
+
     return () => clearInterval(intervalId);
   }, []);
 
@@ -134,7 +134,7 @@ export default function HomePage() {
           selectedOrders={selectedOrders}
         />
         <GuestDetails
-          sessions={sessions}
+          sessions={selectedSession}
           selectedGuest={selectedGuest}
           items={items}
           selectedOrders={selectedOrders}
@@ -183,7 +183,12 @@ function MainContent({
         </div>
       </div>
       <div className="flex flex-col pb-20">
-        {selectedOrders && <TableOverview selectedOrders={selectedOrders} totalPaid={getTotalPaidFromGuests(guests)} />}
+        {selectedOrders && (
+          <TableOverview
+            selectedOrders={selectedOrders}
+            totalPaid={getTotalPaidFromGuests(guests)}
+          />
+        )}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
           Finish Session
         </button>
@@ -199,8 +204,14 @@ function TableOverview({ selectedOrders, totalPaid }) {
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
       <div className="flex flex-row">
         <OverviewItem label="Paid" amount={totalOrder} />
-        <OverviewItem label="Tip" amount={totalPaid ? totalPaid - totalOrder : 0} />
-        <OverviewItem label="Total" amount={totalPaid ? totalPaid : totalOrder} />
+        <OverviewItem
+          label="Tip"
+          amount={totalPaid ? totalPaid - totalOrder : 0}
+        />
+        <OverviewItem
+          label="Total"
+          amount={totalPaid ? totalPaid : totalOrder}
+        />
       </div>
     </div>
   );
