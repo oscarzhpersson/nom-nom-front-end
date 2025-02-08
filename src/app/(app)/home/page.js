@@ -90,7 +90,7 @@ export default function HomePage() {
   useEffect(() => {
     const selectedSession = getSessionFromTable(selectedTable, sessions);
     fetchOrders(selectedSession?.id);
-    setGuests(selectedSession?.users ?? {});
+    setGuests(guestsToList(selectedSession?.users ?? {}));
   }, [sessions, selectedTable]);
 
   return (
@@ -105,10 +105,7 @@ export default function HomePage() {
               key={table.id}
               tableNumber={table.id}
               time="60 minutes"
-              size={
-                guestsToList(getSessionFromTable(table, sessions)?.users ?? {})
-                  .length
-              }
+              size={guestsToList(getSessionFromTable(table, sessions)?.users ?? {}).length}
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
@@ -150,7 +147,7 @@ function MainContent({
       <div className="flex flex-col">
         <h2 className="text-lg p-6 font-semibold text-black">Guests</h2>
         <div className="flex flex-row px-6 flex-wrap space-12">
-          {guestsToList(guests)?.map((guest) => (
+          {guests?.map((guest) => (
             <GuestCard
               className="w-72 m-2"
               key={guest.id}
@@ -166,7 +163,7 @@ function MainContent({
         </div>
       </div>
       <div className="flex flex-col pb-20">
-        {selectedOrders && <TableOverview selectedOrders={selectedOrders} />}
+        {selectedOrders && <TableOverview selectedOrders={selectedOrders} totalPaid={getTotalPaidFromGuests(guests)} />}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
           Finish Session
         </button>
@@ -175,13 +172,15 @@ function MainContent({
   );
 }
 
-function TableOverview({ selectedOrders }) {
+function TableOverview({ selectedOrders, totalPaid }) {
   const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders) : 0;
   return (
     <div className="flex flex-col border-t border-gray-200 space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
       <div className="flex flex-row">
-        <OverviewItem label="Total" amount={totalOrder} />
+        <OverviewItem label="Paid" amount={totalOrder} />
+        <OverviewItem label="Tip" amount={totalPaid ? totalPaid - totalOrder : 0} />
+        <OverviewItem label="Total" amount={totalPaid ? totalPaid : totalOrder} />
       </div>
     </div>
   );
@@ -224,6 +223,12 @@ function getSessionFromTable(table, sessions) {
 function getTotalFromOrders(orders) {
   return orders?.reduce((sum, order) => {
     return sum + order.price * order.quantity;
+  }, 0);
+}
+
+function getTotalPaidFromGuests(guests) {
+  return guests?.reduce((sum, guest) => {
+    return sum + (guest?.pre_payment_amount ?? 0);
   }, 0);
 }
 
