@@ -19,6 +19,7 @@ export default function HomePage() {
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
+  console.log(selectedGuest)
 
   const servers = [
     'Oscar Persson',
@@ -138,11 +139,11 @@ function MainContent({ guests, selectedGuest, setSelectedGuest, selectedOrders }
               key={guest.id}
               guestId={guest.id}
               name={guest.name}
-              total={getTotalFromGuest(guest, selectedOrders)}
+              total={getTotalFromGuest(guest, selectedOrders) ?? 0}
               onSelect={() =>
-                setSelectedGuest(selectedGuest === guest ? null : guest)
+                setSelectedGuest(selectedGuest?.id === guest?.id ? null : guest)
               }
-              selected={selectedGuest === guest}
+              selected={selectedGuest?.id === guest?.id}
             />
           ))}
         </div>
