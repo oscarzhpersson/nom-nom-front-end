@@ -84,7 +84,15 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetchData();
+    const fetchDataWithPolling = async () => {
+      await fetchData();
+    };
+  
+    fetchDataWithPolling();
+  
+    const intervalId = setInterval(fetchDataWithPolling, 5000);
+  
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
