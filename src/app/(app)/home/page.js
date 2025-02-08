@@ -20,15 +20,21 @@ export default function HomePage() {
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const servers = [
+    'Oscar Persson',
+    'Anthony Bassey',
+    'E Joon Ko',
+    'Robin Ellingsen',
+  ];
 
-  useEffect(() => {
-    const selectedSession = getSessionFromTable(selectedTable, sessions)
-    fetchOrders(selectedSession?.id)
-    setGuests(selectedSession?.users ?? {})
-  }, [sessions, selectedTable]);
+  const options = [
+    'filter1',
+    'filter2',
+    'filter3',
+    'filter4',
+    'filter5',
+    'filter6',
+  ];
 
   const fetchData = async () => {
     try {
@@ -67,21 +73,15 @@ export default function HomePage() {
     setSelectedOrders(ordersData)
   };
 
-  const servers = [
-    'Oscar Persson',
-    'Anthony Bassey',
-    'E Joon Ko',
-    'Robin Ellingsen',
-  ];
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const options = [
-    'filter1',
-    'filter2',
-    'filter3',
-    'filter4',
-    'filter5',
-    'filter6',
-  ];
+  useEffect(() => {
+    const selectedSession = getSessionFromTable(selectedTable, sessions)
+    fetchOrders(selectedSession?.id)
+    setGuests(selectedSession?.users ?? {})
+  }, [sessions, selectedTable]);
 
   return (
     <div className="flex flex-col">
