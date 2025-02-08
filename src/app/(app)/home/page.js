@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { addOrder } from '@/api/add-order';
+import { closeSession } from '@/api/close-session';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 
@@ -133,6 +134,7 @@ export default function HomePage() {
           selectedGuest={selectedGuest}
           setSelectedGuest={setSelectedGuest}
           selectedOrders={selectedOrders}
+          selectedSession={selectedSession}
         />
         <GuestDetails
           sessions={selectedSession}
@@ -161,6 +163,7 @@ function MainContent({
   selectedGuest,
   setSelectedGuest,
   selectedOrders,
+  selectedSession,
 }) {
   return (
     <div className="flex w-6/12 overflow-y-scroll bg-[#F7F7F7] flex-col space-y-6 border-r border-gray-200 hide-scrollbar justify-between">
@@ -192,7 +195,7 @@ function MainContent({
             totalTable={getTotalFromOrders(selectedOrders)}
           />
         )}
-        <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
+        <button disabled={!selectedSession} className="bg-black text-white p-4 my-8 mx-6 rounded-md" onClick={() => closeSession(selectedSession?.id)}>
           Finish Session
         </button>
       </div>
@@ -202,6 +205,7 @@ function MainContent({
 
 function TableOverview({ selectedOrders, totalPaid, totalTable }) {
   const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders.filter((order) => order?.status === "paid")) : 0;
+  const totalTip = Math.max(totalPaid ? totalPaid - totalOrder : 0, 0)
   return (
     <div className="flex flex-col border-t border-gray-200 space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
@@ -209,11 +213,11 @@ function TableOverview({ selectedOrders, totalPaid, totalTable }) {
         <OverviewItem label="Paid" amount={totalOrder} />
         <OverviewItem
           label="Tip"
-          amount={Math.max(totalPaid ? totalPaid - totalOrder : 0, 0)}
+          amount={totalTip}
         />
         <OverviewItem
           label="Total"
-          amount={totalTable ? totalTable : totalOrder}
+          amount={totalTable ? totalTable + totalTip : totalOrder}
         />
       </div>
     </div>
