@@ -21,6 +21,7 @@ export default function HomePage() {
   const [guests, setGuests] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedSession, setSelectedSession] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState(null);
   const [selectedGuest, setSelectedGuest] = useState(null);
 
@@ -92,6 +93,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const selectedSession = getSessionFromTable(selectedTable, sessions);
+    setSelectedSession(selectedSession);
     fetchOrders(selectedSession?.id);
     setGuests(guestsToList(selectedSession?.users ?? {}));
   }, [sessions, selectedTable]);
@@ -108,7 +110,7 @@ export default function HomePage() {
               key={table.id}
               tableNumber={table.id}
               time="60 minutes"
-              size={guestsToList(getSessionFromTable(table, sessions)?.users ?? {}).length}
+              size={guestsToList(selectedSession?.users ?? {}).length}
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
