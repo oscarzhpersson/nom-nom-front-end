@@ -189,6 +189,7 @@ function MainContent({
           <TableOverview
             selectedOrders={selectedOrders}
             totalPaid={getTotalPaidFromGuests(guests.filter((order) => order?.status === "paid"))}
+            totalTable={getTotalPaidFromGuests(guests)}
           />
         )}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
@@ -199,7 +200,7 @@ function MainContent({
   );
 }
 
-function TableOverview({ selectedOrders, totalPaid }) {
+function TableOverview({ selectedOrders, totalPaid, totalTable }) {
   const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders.filter((order) => order?.status === "paid")) : 0;
   return (
     <div className="flex flex-col border-t border-gray-200 space-12 bg-[#F7F7F7]">
@@ -212,7 +213,7 @@ function TableOverview({ selectedOrders, totalPaid }) {
         />
         <OverviewItem
           label="Total"
-          amount={totalPaid ? totalPaid : totalOrder}
+          amount={totalTable ? totalTable : totalOrder}
         />
       </div>
     </div>
