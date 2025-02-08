@@ -26,7 +26,7 @@ export default function ItemCard({
               <div className="flex flex-row justify-center items-center space-x-4">
                 <button
                   onClick={onDecrement}
-                  className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-full"
+                  className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-full transition-transform duration-150 transform hover:scale-105 active:scale-95"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +42,7 @@ export default function ItemCard({
                 <span className="text-black text-xl">{quantity}</span>
                 <button
                   onClick={onIncrement}
-                  className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-full"
+                  className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-full transition-transform duration-150 transform hover:scale-105 active:scale-95"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

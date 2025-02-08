@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 import Dropdown from './dropdown';
 
@@ -13,13 +14,18 @@ export default function Navbar({ servers }) {
   return (
     <nav className="w-full flex flex-row px-8 items-center justify-between p-3 shadow-sm bg-white z-50">
       <div className="flex flex-row items-center space-x-10 font-extralight text-black">
-        <Dropdown
-          options={servers}
-          selected={selectedServer}
-          onChange={setSelectedServer}
-        />
+        <div className="flex flex-row items-center space-x-4">
+          <Image src="/nomnom.png" alt="Nom-nom Logo" width={50} height={50} />
+          <Dropdown
+            options={servers}
+            selected={selectedServer}
+            onChange={setSelectedServer}
+          />
+        </div>
 
-        <a href="/home">Tables</a>
+        <a className="font-medium" href="/home">
+          Tables
+        </a>
         <a href="/receipts">Receipts</a>
       </div>
       <div className="flex items-center space-x-10">

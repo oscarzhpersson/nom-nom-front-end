@@ -204,8 +204,14 @@ function TableOverview({ selectedOrders, totalPaid }) {
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
       <div className="flex flex-row">
         <OverviewItem label="Paid" amount={totalOrder} />
-        <OverviewItem label="Tip" amount={Math.max(totalPaid ? totalPaid - totalOrder : 0, 0)} />
-        <OverviewItem label="Total" amount={totalPaid ? totalPaid : totalOrder} />
+        <OverviewItem
+          label="Tip"
+          amount={Math.max(totalPaid ? totalPaid - totalOrder : 0, 0)}
+        />
+        <OverviewItem
+          label="Total"
+          amount={totalPaid ? totalPaid : totalOrder}
+        />
       </div>
     </div>
   );
@@ -229,13 +235,10 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
       : [];
 
   const handleIncrement = (item, quantity) => {
-    console.log('Increment clicked for:', item);
-    console.log(sessions);
     addOrder(sessions.id, selectedGuest.id, item, quantity + 1);
   };
 
   const handleDecrement = (item, quantity) => {
-    console.log('Decrement clicked for:', item);
     addOrder(sessions.id, selectedGuest.id, item, quantity - 1);
   };
 
@@ -245,27 +248,31 @@ function GuestDetails({ sessions, selectedGuest, items, selectedOrders }) {
         {selectedGuest?.name || 'Guest Details'}
       </h2>
       <div className="flex flex-row flex-wrap space-12 space-y-6 overflow-y-scroll hide-scrollbar">
-        {items.map((item) => {
-          const matchingOrder = guestOrders.find(
-            (order) =>
-              String(order.item_name).toLowerCase() ===
-              String(item.name).toLowerCase()
-          );
-          const orderQuantity = matchingOrder?.quantity ?? 0;
-
-          return (
+        {items
+          .map((item) => {
+            const matchingOrder = guestOrders.find(
+              (order) =>
+                String(order.item_name).toLowerCase() ===
+                String(item.name).toLowerCase()
+            );
+            return {
+              ...item,
+              orderQuantity: matchingOrder ? matchingOrder.quantity : 0,
+            };
+          })
+          .sort((a, b) => b.orderQuantity - a.orderQuantity)
+          .map((item) => (
             <ItemCard
               key={item.id}
               name={item.name}
               price={item.price}
               description={item.description}
-              quantity={orderQuantity}
+              quantity={item.orderQuantity}
               selectedGuest={selectedGuest}
-              onIncrement={() => handleIncrement(item, orderQuantity)}
-              onDecrement={() => handleDecrement(item, orderQuantity)}
+              onIncrement={() => handleIncrement(item, item.orderQuantity)}
+              onDecrement={() => handleDecrement(item, item.orderQuantity)}
             />
-          );
-        })}
+          ))}
       </div>
     </div>
   );
