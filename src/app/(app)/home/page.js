@@ -119,7 +119,7 @@ export default function HomePage() {
               key={table.id}
               tableNumber={table.id}
               time="60 minutes"
-              size={guestsToList(selectedSession?.users ?? {}).length}
+              size={guestsToList(getSessionFromTable(table, sessions)?.users ?? {}).length}
               onSelect={() =>
                 setSelectedTable(selectedTable === table ? null : table)
               }
@@ -187,7 +187,7 @@ function MainContent({
         {selectedOrders && (
           <TableOverview
             selectedOrders={selectedOrders}
-            totalPaid={getTotalPaidFromGuests(guests)}
+            totalPaid={getTotalPaidFromGuests(guests.filter((order) => order?.status === "paid"))}
           />
         )}
         <button className="bg-black text-white p-4 my-8 mx-6 rounded-md">
@@ -199,7 +199,7 @@ function MainContent({
 }
 
 function TableOverview({ selectedOrders, totalPaid }) {
-  const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders) : 0;
+  const totalOrder = selectedOrders ? getTotalFromOrders(selectedOrders.filter((order) => order?.status === "paid")) : 0;
   return (
     <div className="flex flex-col border-t border-gray-200 space-12 bg-[#F7F7F7]">
       <h2 className="text-lg font-semibold p-6 text-black">Table Overview</h2>
